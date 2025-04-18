@@ -5,10 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LoginResponse extends Response {
-    private String email;
-    private String firstName;
-    private String lastName;
+public class RefreshTokenResponse extends Response {
     private String accessToken;
     private String refreshToken;
 }
