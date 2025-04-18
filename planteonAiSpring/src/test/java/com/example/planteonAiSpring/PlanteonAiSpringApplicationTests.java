@@ -1,10 +1,10 @@
-package com.example.planteonAi;
+package com.example.planteonAiSpring;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PlanteonAiApplicationTests {
+class PlanteonAiSpringApplicationTests {
 
 	@Test
 	void contextLoads() {
