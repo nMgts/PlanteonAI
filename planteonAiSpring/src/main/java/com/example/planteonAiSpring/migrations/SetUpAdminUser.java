@@ -18,7 +18,7 @@ public class SetUpAdminUser {
     @PostConstruct
     public void init() {
         if (!migrationInfoRepository.existsByMigrationName("SetUpAdminUser")) {
-            authService.registerAdmin("admin", "admin", "admin@example.com", "admin");
+            authService.registerAdmin("admin", "admin", "admin@example.com", "123");
 
             MigrationInfo migrationInfo = new MigrationInfo();
             migrationInfo.setMigrationName("SetUpAdminUser");
