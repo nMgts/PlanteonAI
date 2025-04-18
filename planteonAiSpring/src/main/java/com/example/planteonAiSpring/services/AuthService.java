@@ -14,7 +14,6 @@ import com.example.planteonAiSpring.types.Role;
 import com.example.planteonAiSpring.utils.JWTUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +111,7 @@ public class AuthService {
 
             userRepository.save(user);
 
-            response.setStatusCode(200);
+            response.setStatusCode(201);
             response.setMessage("User registered successfully");
         } catch (EmailTakenException e) {
             response.setStatusCode(409);

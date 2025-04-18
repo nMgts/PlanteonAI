@@ -35,13 +35,13 @@ public class SecurityConfig {
 
                         // Public endpoints
                         .requestMatchers(
-                                "/api/auth/login", "/api/auth/register", "/api/auth/logout"
+                                "/api/auth/login", "/api/auth/logout", "/api/auth/refresh"
                         )
                         .permitAll()
 
                         // Admin endpoints
                         .requestMatchers(
-                                "/api/test1"
+                                "/api/auth/register-user", "/api/auth/update-credentials"
                         )
                         .hasAuthority("ADMIN")
 
@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                         // Authenticated
                         .requestMatchers(
-                                "/api/test3"
+                                "/api/auth/change-password"
                         )
                         .authenticated())
 
