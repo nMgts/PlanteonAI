@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                         // Authenticated
                         .requestMatchers(
-                                "/api/auth/change-password"
+                                "/api/auth/change-password", "/api/auth/is-authenticated"
                         )
                         .authenticated())
 
