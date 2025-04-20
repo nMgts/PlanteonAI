@@ -1,7 +1,6 @@
 package com.example.planteonAiSpring.config;
 
 import com.example.planteonAiSpring.services.UserDetailsService;
-import com.example.planteonAiSpring.utils.JWTUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

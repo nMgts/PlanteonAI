@@ -25,7 +25,7 @@ export class LoginComponent {
       return;
     }
 
-    this.authService.login({email: this.email, password: this.password}).subscribe({
+    this.authService.login({username: this.email, password: this.password}).subscribe({
       next: () => this.router.navigate(['/']),
       error: () => this.showError('Niepoprawny email lub hasło')
     });

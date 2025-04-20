@@ -1,62 +1,41 @@
 import { Injectable } from '@angular/core';
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
-import { catchError, Observable, switchMap, throwError } from 'rxjs';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { catchError, Observable, switchMap, throwError } from "rxjs";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenInterceptorService implements HttpInterceptor {
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('accessToken');
-
-    let clonedRequest = req;
-
-    if (token) {
-      clonedRequest = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    }
-
-    return next.handle(clonedRequest).pipe(
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    console.log('proba przechwycenia')
+    return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
           return this.authService.refreshToken().pipe(
-            switchMap((response) => {
-              if (response.statusCode === 200) {
-                localStorage.setItem('accessToken', response.accessToken);
+            switchMap((refreshResponse) => {
+              if (refreshResponse.statusCode === 200) {
+                console.log("Wykonuję odświeżenie tokena");
+                localStorage.setItem('accessToken', refreshResponse.accessToken);
 
-                const retryRequest = req.clone({
+                const authRequest = request.clone({
                   setHeaders: {
-                    Authorization: `Bearer ${response.accessToken}`
+                    Authorization: `Bearer ${refreshResponse.accessToken}`
                   }
                 });
-                return next.handle(retryRequest);
+                return next.handle(authRequest);
               } else {
                 this.authService.logout();
-                this.router.navigate(['/login']);
-                return throwError(() => new Error('Unauthorized'));
+                return throwError('Refresh token failed');
               }
-            }),
-            catchError(() => {
-              this.authService.logout();
-              this.router.navigate(['/login']);
-              return throwError(() => new Error('Unauthorized'));
             })
           );
         }
-
-        return throwError(() => error);
+        return throwError(error);
       })
-    )
+    );
   }
 }

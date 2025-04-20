@@ -33,8 +33,8 @@ export class AuthService {
     private router: Router
   ) {}
 
-  login(credentials: { email: string, password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.loginUrl, credentials).pipe(
+  login(credentials: { username: string, password: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.loginUrl, credentials, { withCredentials: true }).pipe(
       tap(response => {
         if (response.statusCode === 200) {
           localStorage.setItem('accessToken', response.accessToken);
@@ -52,16 +52,24 @@ export class AuthService {
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {
-    return this.http.post<RefreshTokenResponse>(this.refreshTokenUrl, {});
+    return this.http.post<RefreshTokenResponse>(this.refreshTokenUrl, {}, { withCredentials: true });
   }
 
   checkAuth(): Observable<boolean> {
     const headers = this.createHeaders();
-    return this.http.get(this.isAuthenticatedUrl, { headers, observe: 'response' }).pipe(
-      map(response => response.status === 200),
-      catchError(() => of(false))
+    return this.http.get(this.isAuthenticatedUrl, {
+      headers,
+      observe: 'response'
+    }).pipe(
+      map(response => {
+        return response.status === 200;
+      }),
+      catchError(err => {
+        return of(false);
+      })
     );
   }
+
 
   private createHeaders() {
     const token = localStorage.getItem('accessToken') || '';

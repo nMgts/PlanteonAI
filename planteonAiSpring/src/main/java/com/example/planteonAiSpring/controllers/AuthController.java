@@ -24,7 +24,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    //@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+    @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         LoginResponse loginResponse = authService.login(request);
         if (loginResponse.getStatusCode() == 200) {
@@ -52,6 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
     public ResponseEntity<RefreshTokenResponse> refreshToken(@CookieValue(value = "refreshToken") String refreshToken,
                                                              HttpServletResponse response) {
         RefreshTokenResponse refreshResponse = authService.refreshToken(refreshToken);
@@ -95,6 +96,6 @@ public class AuthController {
 
     @GetMapping("/is-authenticated")
     public ResponseEntity<String> isUserAuthenticated() {
-        return ResponseEntity.ok().body("User is authenticated");
+        return ResponseEntity.ok().body("{\"message\": \"User is authenticated\"}");
     }
 }

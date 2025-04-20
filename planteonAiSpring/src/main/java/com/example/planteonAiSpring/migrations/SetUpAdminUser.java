@@ -17,11 +17,11 @@ public class SetUpAdminUser {
 
     @PostConstruct
     public void init() {
-        if (!migrationInfoRepository.existsByMigrationName("SetUpAdminUser")) {
-            authService.registerAdmin("admin", "admin", "admin@example.com", "123");
+        if (!migrationInfoRepository.existsByMigrationName("SetUpAdminUser2")) {
+            authService.registerAdmin("admin", "admin", "admin2@example.com", "123");
 
             MigrationInfo migrationInfo = new MigrationInfo();
-            migrationInfo.setMigrationName("SetUpAdminUser");
+            migrationInfo.setMigrationName("SetUpAdminUser2");
             migrationInfo.setExecutedAt(new Date());
             migrationInfoRepository.save(migrationInfo);
         }

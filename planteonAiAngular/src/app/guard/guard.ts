@@ -10,6 +10,7 @@ export const userGuard: CanActivateFn = (route, state) => {
 
   return authService.checkAuth().pipe(
     map(isAuthenticated => {
+      console.log(isAuthenticated);
       if (isAuthenticated) {
         return true;
       } else {
