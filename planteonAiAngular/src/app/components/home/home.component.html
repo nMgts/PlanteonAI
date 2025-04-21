@@ -1,5 +1,37 @@
 <div class="home-container">
-  <div class="main-content">
+
+  <!-- Sidebar -->
+  <div class="sidebar" *ngIf="isLeftSidebarOpen">
+
+    <div class="sidebar-icons">
+      <button class="icon-button" title="Menu"
+              (click)="isLeftSidebarOpen = false" title="Zamknij">
+        <i class="material-icons">menu</i>
+      </button>
+      <button class="icon-button" title="Nowy czat">
+        <i class="material-icons">add</i>
+      </button>
+    </div>
+
+    <div class="chat-list">
+      <div class="chat-item" *ngFor="let chat of chatList">
+        {{ chat.name }}
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content" [ngStyle]="{'margin-left': isLeftSidebarOpen ? '280px' : '0'}">
+    <!-- Ikonki w lewym górnym rogu (widoczne tylko gdy sidebar zamknięty) -->
+    <div class="top-icons" *ngIf="!isLeftSidebarOpen">
+      <button class="icon-button" (click)="isLeftSidebarOpen = true" title="Menu">
+        <i class="material-icons">menu</i>
+      </button>
+      <button class="icon-button" title="Nowy czat">
+        <i class="material-icons">add</i>
+      </button>
+    </div>
+
+
     <div class="chat-box">
 
       <!-- Nagłówek tylko, gdy nie ma wiadomości -->

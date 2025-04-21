@@ -12,7 +12,11 @@ export class HomeComponent implements AfterViewInit {
   messages: { sender: string, text: string }[] = [];
   isLeftSidebarOpen = false;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
-  chats = [{ name: 'Chat 1' }, { name: 'Chat 2' }, { name: 'Chat 3' }];
+  chatList = [
+    { name: 'Czat z Markiem' },
+    { name: 'Wsparcie techniczne' },
+    { name: 'Projekt: AI Chat' },
+  ];
   selectedModel = 'Model 1';
   models = ['Model 1', 'Model 2', 'Model 3'];
   user = { firstName: 'John', lastName: 'Doe' };
