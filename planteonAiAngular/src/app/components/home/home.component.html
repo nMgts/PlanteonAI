@@ -1,1 +1,33 @@
-<p>home works!</p>
+<div class="home-container">
+  <div class="main-content">
+    <div class="chat-box">
+      <h2 class="chat-header">W czym mogę Ci pomóc?</h2>
+
+      <!-- Nowy zaokrąglony panel -->
+      <div class="chat-panel">
+        <textarea
+          [(ngModel)]="newMessage"
+          class="chat-textarea"
+          placeholder="Napisz wiadomość..."
+          (input)="autoResize($event)">
+        </textarea>
+
+        <!-- Dolny pasek z ikonami -->
+        <div class="chat-toolbar">
+          <button class="icon-button" title="Dodaj">
+            <i class="material-icons">add</i>
+          </button>
+
+          <div class="right-icons">
+            <button class="icon-button" title="Nagraj wiadomość">
+              <i class="material-icons">mic</i>
+            </button>
+            <button class="icon-button" title="Wyślij" (click)="sendMessage()">
+              <i class="material-icons">send</i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
