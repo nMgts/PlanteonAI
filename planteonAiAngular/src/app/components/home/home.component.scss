@@ -1,7 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* home.component.scss */
 .home-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   flex-direction: row;
   background-color: #2c2c2c;
   color: white;
@@ -23,38 +29,80 @@
   align-items: center;
   height: 100%;
   text-align: center;
+  position: relative;
 
   .chat-header {
     margin-bottom: 20px;
     font-size: 24px;
   }
 
+  .messages-container {
+    width: 100%;
+    max-width: 700px;
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .message {
+      padding: 10px 16px;
+      border-radius: 16px;
+      max-width: 70%;
+      font-size: 14px;
+      line-height: 1.2;
+      word-wrap: break-word;
+      text-align: left;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background-color: #555;
+      color: white;
+    }
+
+    .bot-message {
+      background-color: transparent; // brak tła
+      color: white;
+      width: 100%; // pełna dostępna szerokość
+      max-width: 100%;
+      align-self: stretch; // rozciąga na pełną szerokość
+      padding: 10px 0; // tylko pionowe wypełnienie
+      border-radius: 0; // bez zaokrągleń
+    }
+  }
+
   .chat-panel {
     background-color: #3a3a3a;
     border-radius: 24px;
-    padding: 16px 16px 0 16px;
+    padding: 8px 16px 0 16px;
     max-width: 700px;
     width: 100%;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
+    position: relative;
+    transition: all 0.3s ease;
+
+    &.at-bottom {
+      margin-top: auto;
+    }
   }
 
   .chat-textarea {
     width: 99%;
-    min-height: 40px;
+    height: auto;
+    min-height: 24px;
     max-height: 160px;
     background: transparent;
     color: white;
     border: none;
     outline: none;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.2;
     resize: none;
     overflow: auto;
     padding: 8px 12px;
-    margin-bottom: 8px;
-
+    transition: height 0.15s ease-in-out;
     scrollbar-width: thin;
     scrollbar-color: #888 transparent;
 
@@ -101,3 +149,4 @@
     gap: 8px;
   }
 }
+

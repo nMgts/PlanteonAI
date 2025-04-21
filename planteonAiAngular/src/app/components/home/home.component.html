@@ -1,18 +1,31 @@
 <div class="home-container">
   <div class="main-content">
     <div class="chat-box">
-      <h2 class="chat-header">W czym mogę Ci pomóc?</h2>
 
-      <!-- Nowy zaokrąglony panel -->
-      <div class="chat-panel">
+      <!-- Nagłówek tylko, gdy nie ma wiadomości -->
+      <h2 class="chat-header" *ngIf="messages.length === 0">
+        W czym mogę Ci pomóc?
+      </h2>
+
+      <!-- Lista wiadomości -->
+      <div class="messages-container" *ngIf="messages.length > 0">
+        <div
+          *ngFor="let msg of messages"
+          [ngClass]="msg.sender === 'user' ? 'message user-message' : 'message bot-message'">
+          {{ msg.text }}
+        </div>
+      </div>
+
+      <!-- Panel na dole lub na środku -->
+      <div class="chat-panel" [ngClass]="{ 'at-bottom': messages.length > 0 }">
         <textarea
+          #textareaRef
           [(ngModel)]="newMessage"
           class="chat-textarea"
           placeholder="Napisz wiadomość..."
-          (input)="autoResize($event)">
+          (ngModelChange)="onInputChange()">
         </textarea>
 
-        <!-- Dolny pasek z ikonami -->
         <div class="chat-toolbar">
           <button class="icon-button" title="Dodaj">
             <i class="material-icons">add</i>
@@ -28,6 +41,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

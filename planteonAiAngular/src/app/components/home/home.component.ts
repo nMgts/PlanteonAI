@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -6,19 +6,22 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements AfterViewInit {
+  @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
+  messages: { sender: string, text: string }[] = [];
   isLeftSidebarOpen = false;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
   chats = [{ name: 'Chat 1' }, { name: 'Chat 2' }, { name: 'Chat 3' }];
   selectedModel = 'Model 1';
   models = ['Model 1', 'Model 2', 'Model 3'];
   user = { firstName: 'John', lastName: 'Doe' };
-  messages = ['W czym mogę Ci pomóc?'];
   newMessage = '';
   isFirstMessage = true;
 
-  ngOnInit() {}
+  ngAfterViewInit(): void {
+    this.resizeTextarea();
+  }
 
   toggleSidebar(side: string) {
     if (side === 'left') {
@@ -42,15 +45,26 @@ export class HomeComponent implements OnInit {
 
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.messages.push(this.newMessage);
+      this.messages.push({ sender: 'user', text: this.newMessage });
       this.newMessage = '';
-      this.isFirstMessage = false; // Po wysłaniu pierwszej wiadomości
+
+      // symulacja odpowiedzi AI
+      setTimeout(() => {
+        this.messages.push({ sender: 'bot', text: 'To przykładowa odpowiedź.' });
+      }, 600);
     }
   }
 
-  autoResize(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    textarea.style.height = 'auto'; // reset wysokości
-    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px'; // max 150px
+  onInputChange(): void {
+    this.resizeTextarea();
+  }
+
+  private resizeTextarea(): void {
+    const textarea = this.textareaRef?.nativeElement;
+    if (textarea) {
+      textarea.style.height = 'auto'; // Resetuj, aby pozwolić zmierzyć aktualny scrollHeight
+      const newHeight = Math.min(textarea.scrollHeight, 150);
+      textarea.style.height = `${newHeight}px`;
+    }
   }
 }
