@@ -14,7 +14,8 @@
     </div>
 
     <div class="chat-list">
-      <div class="chat-item" (click)="openChat(chat)" *ngFor="let chat of chatList">
+      <div class="chat-item" (click)="openChat(chat)" [ngClass]="{ 'active-chat': chat.id === selectedChatId }"
+           *ngFor="let chat of chatList">
         {{ chat.title }}
         <button class="icon-button" (click)="deleteChat(chat.id); $event.stopPropagation()" title="Usuń czat" style="float: right;">
           <i class="material-icons">delete</i>

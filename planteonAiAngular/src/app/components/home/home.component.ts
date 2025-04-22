@@ -29,6 +29,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   newMessage = '';
   isFirstMessage = true;
 
+  chatCounter: number = 1;
+
   constructor(
     private authService: AuthService,
     private chatService: ChatService,
@@ -46,16 +48,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadChats() {
     this.chatService.getChats().subscribe({
-      next: chats => this.chatList = chats,
-      error: err => console.error('Error loading chats, error')
+      next: chats => this.chatList = chats.reverse(),
+      error: err => console.error('Error during loading chats', err)
     });
   }
 
   createNewChat() {
-    this.chatService.createChat('Nowy chat').subscribe({
+    this.chatService.createChat('Nowy chat ' + this.chatCounter).subscribe({
       next: chat => {
         this.chatList.unshift(chat);
         this.selectedChatId = chat.id;
+        this.chatCounter++;
       },
       error: err => console.error('error creating chat', err)
     });
@@ -106,9 +109,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendMessage(): void {
+  async sendMessage() {
     if (this.newMessage.trim() && this.selectedChatId) {
-      this.getMessages();
+
+      const messageData: ChatMessage = {
+        text: this.newMessage,
+        type: 'INPUT',
+      };
+      this.messages.push(messageData);
+
       this.chatMessageService.sendMessage(this.selectedChatId, this.newMessage).subscribe({
         next: (response) => {
           // Po wysłaniu wiadomości dodaj ją do lokalnej listy
