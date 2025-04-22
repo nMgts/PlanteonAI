@@ -12,6 +12,7 @@ export class HomeComponent implements AfterViewInit {
   messages: { sender: string, text: string }[] = [];
   isLeftSidebarOpen = false;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
+  isAvatarMenuOpen = false;
   chatList = [
     { name: 'Czat z Markiem' },
     { name: 'Wsparcie techniczne' },
@@ -27,12 +28,8 @@ export class HomeComponent implements AfterViewInit {
     this.resizeTextarea();
   }
 
-  toggleSidebar(side: string) {
-    if (side === 'left') {
-      this.isLeftSidebarOpen = !this.isLeftSidebarOpen;
-    } else {
-      this.isRightSidebarOpen = !this.isRightSidebarOpen;
-    }
+  toggleAvatarMenu() {
+    this.isAvatarMenuOpen = !this.isAvatarMenuOpen;
   }
 
   onModelChange() {
