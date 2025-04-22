@@ -4,28 +4,53 @@ import com.example.planteonAiSpring.controllers.N8nController;
 import com.example.planteonAiSpring.dtos.ChatMessageDTO;
 import com.example.planteonAiSpring.entities.Chat;
 import com.example.planteonAiSpring.entities.ChatMessage;
+import com.example.planteonAiSpring.entities.User;
 import com.example.planteonAiSpring.mappers.ChatMessageMapper;
 import com.example.planteonAiSpring.repositories.ChatMessageRepository;
 import com.example.planteonAiSpring.repositories.ChatRepository;
+import com.example.planteonAiSpring.repositories.UserRepository;
 import com.example.planteonAiSpring.types.MessageType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
     private final N8nController n8nController;
     private final ChatMessageMapper chatMessageMapper;
+
+    public List<ChatMessageDTO> getAllChatMessages(UUID chatId, Authentication authentication) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(
+                () -> new EntityNotFoundException("Chat not found")
+        );
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("User not found")
+        );
+        if (!chat.getUser().equals(user)) {
+            throw new SecurityException("You are not chat owner");
+        }
+
+        List<ChatMessage> messages = chatMessageRepository.findByChatId(chatId);
+
+        return messages.stream()
+                .map(chatMessageMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     public ChatMessageDTO sendMessage(String content, UUID chatId) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(

@@ -105,16 +105,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         },
       });
     }
-
-    setTimeout(() => {
-      this.messages.push(<ChatMessage>{
-        id: '1',
-        createdAt: '123',
-        text: 'Przykładowa odpowiedź',
-        chatId: this.selectedChatId,
-        type: 'OUTPUT'
-      });
-    }, 600);
   }
 
   onInputChange(): void {
