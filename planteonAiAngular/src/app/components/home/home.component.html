@@ -8,14 +8,17 @@
               (click)="isLeftSidebarOpen = false" title="Zamknij">
         <i class="material-icons">menu</i>
       </button>
-      <button class="icon-button" title="Nowy czat">
+      <button class="icon-button" title="Nowy czat" (click)="createNewChat()">
         <i class="material-icons">add</i>
       </button>
     </div>
 
     <div class="chat-list">
       <div class="chat-item" *ngFor="let chat of chatList">
-        {{ chat.name }}
+        {{ chat.title }}
+        <button class="icon-button" (click)="deleteChat(chat.id); $event.stopPropagation()" title="Usuń czat" style="float: right;">
+          <i class="material-icons">delete</i>
+        </button>
       </div>
     </div>
   </div>
@@ -30,7 +33,7 @@
       <button class="icon-button" (click)="isLeftSidebarOpen = true" title="Menu">
         <i class="material-icons">menu</i>
       </button>
-      <button class="icon-button" title="Nowy czat">
+      <button class="icon-button" title="Nowy czat" (click)="createNewChat()">
         <i class="material-icons">add</i>
       </button>
     </div>

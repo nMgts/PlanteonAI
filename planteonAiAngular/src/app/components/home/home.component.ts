@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Chat } from '../../entities/Chat';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-home',
@@ -7,30 +9,72 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
   messages: { sender: string, text: string }[] = [];
+  chatList: Chat[] = [];
+  selectedChatId: string | null = null;
+
   isLeftSidebarOpen = false;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
   isAvatarMenuOpen = false;
-  chatList = [
-    { name: 'Czat z Markiem' },
-    { name: 'Wsparcie techniczne' },
-    { name: 'Projekt: AI Chat' },
-  ];
+
   selectedModel = 'Model 1';
   models = ['Model 1', 'Model 2', 'Model 3'];
+
   user = { firstName: 'John', lastName: 'Doe' };
   newMessage = '';
   isFirstMessage = true;
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private chatService: ChatService
   ) {}
 
-  ngAfterViewInit(): void {
+  ngOnInit() {
+    this.loadChats();
+    this.createNewChat();
+  }
+
+  ngAfterViewInit() {
     this.resizeTextarea();
+  }
+
+  loadChats() {
+    this.chatService.getChats().subscribe({
+      next: chats => this.chatList = chats,
+      error: err => console.error('Error loading chats, error')
+    });
+  }
+
+  createNewChat() {
+    this.chatService.createChat('Nowy chat').subscribe({
+      next: chat => {
+        this.chatList.unshift(chat);
+        this.selectedChatId = chat.id;
+      },
+      error: err => console.error('error creating chat', err)
+    });
+  }
+
+  deleteChat(chatId: string) {
+    this.chatService.deleteChat(chatId).subscribe({
+      next: () => {
+        this.chatList = this.chatList.filter(chat => chat.id !== chatId);
+        if (this.selectedChatId === chatId) {
+          this.selectedChatId = null;
+          this.messages = [];
+        }
+      },
+      error: err => console.error('Error deleting chat', err)
+    });
+  }
+
+  openChat(chat: Chat) {
+    this.selectedChatId = chat.id;
+    console.log('Opening chat: ', chat.title);
+    // todo
   }
 
   toggleAvatarMenu() {
@@ -43,10 +87,6 @@ export class HomeComponent implements AfterViewInit {
 
   openNewChat() {
     console.log('Opening new chat...');
-  }
-
-  openChat(chat: any) {
-    console.log('Opening chat:', chat);
   }
 
   sendMessage() {
