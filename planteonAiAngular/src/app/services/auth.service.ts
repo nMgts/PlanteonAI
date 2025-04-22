@@ -27,6 +27,7 @@ export class AuthService {
   private loginUrl = `${this.baseUrl}/login`;
   private isAuthenticatedUrl = `${this.baseUrl}/is-authenticated`;
   private refreshTokenUrl = `${this.baseUrl}/refresh`
+  private logoutUrl = `${this.baseUrl}/logout`;
 
   constructor(
     private http: HttpClient,
@@ -46,9 +47,13 @@ export class AuthService {
     )
   }
 
-  logout() {
+  logout(): Observable<any> {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('lastName');
+    localStorage.removeItem('email');
     this.router.navigate(['/login']);
+    return this.http.post(this.logoutUrl, {}, { withCredentials: true });
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {

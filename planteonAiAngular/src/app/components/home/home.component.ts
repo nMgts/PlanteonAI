@@ -1,4 +1,5 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +24,10 @@ export class HomeComponent implements AfterViewInit {
   user = { firstName: 'John', lastName: 'Doe' };
   newMessage = '';
   isFirstMessage = true;
+
+  constructor(
+    private authService: AuthService
+  ) {}
 
   ngAfterViewInit(): void {
     this.resizeTextarea();
@@ -67,5 +72,16 @@ export class HomeComponent implements AfterViewInit {
       const newHeight = Math.min(textarea.scrollHeight, 150);
       textarea.style.height = `${newHeight}px`;
     }
+  }
+
+  logout() {
+    this.authService.logout().subscribe(
+      () => {
+        console.log('Logged out successfully')
+      },
+      () => {
+        console.log('Logged out successfully.')
+      }
+    );
   }
 }

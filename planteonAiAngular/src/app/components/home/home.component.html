@@ -45,7 +45,7 @@
         <div class="avatar">JS</div>
         <div class="avatar-menu" *ngIf="isAvatarMenuOpen">
           <div class="avatar-menu-item">Ustawienia</div>
-          <div class="avatar-menu-item">Wyloguj</div>
+          <div class="avatar-menu-item" (click)="logout()">Wyloguj</div>
         </div>
       </div>
     </div>
@@ -106,7 +106,7 @@
         <div class="avatar">JS</div>
         <div class="avatar-menu" *ngIf="isAvatarMenuOpen">
           <div class="avatar-menu-item">Ustawienia</div>
-          <div class="avatar-menu-item">Wyloguj</div>
+          <div class="avatar-menu-item" (click)="logout()">Wyloguj</div>
         </div>
       </div>
     </div>
