@@ -76,6 +76,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   openChat(chat: Chat) {
     this.selectedChatId = chat.id;
+    this.getMessages();
     console.log('Opening chat: ', chat.title);
     // todo
   }
@@ -92,8 +93,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('Opening new chat...');
   }
 
+  getMessages() {
+    if (this.selectedChatId) {
+      this.chatMessageService.getMessages(this.selectedChatId).subscribe({
+        next: (response) => {
+          this.messages = response;
+        },
+        error: (err) => {
+          console.error('Error during downloading messages');
+        },
+      });
+    }
+  }
+
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedChatId) {
+      this.getMessages();
       this.chatMessageService.sendMessage(this.selectedChatId, this.newMessage).subscribe({
         next: (response) => {
           // Po wysłaniu wiadomości dodaj ją do lokalnej listy

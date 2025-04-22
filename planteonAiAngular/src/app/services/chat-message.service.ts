@@ -11,6 +11,11 @@ export class ChatMessageService {
 
   constructor(private http: HttpClient) {}
 
+  getMessages(chatId: string) {
+    const headers = this.createHeaders();
+    return this.http.get<ChatMessage[]>(`${this.baseUrl}/${chatId}/get-all`, { headers });
+  }
+
   sendMessage(chatId: string, text: string) {
     const headers = this.createHeaders();
     return this.http.post<ChatMessage>(`${this.baseUrl}/${chatId}/send`, text, { headers });

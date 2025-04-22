@@ -11,6 +11,7 @@ import com.example.planteonAiSpring.repositories.ChatRepository;
 import com.example.planteonAiSpring.repositories.UserRepository;
 import com.example.planteonAiSpring.types.MessageType;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ public class ChatMessageService {
     private final N8nController n8nController;
     private final ChatMessageMapper chatMessageMapper;
 
+    @Transactional
     public List<ChatMessageDTO> getAllChatMessages(UUID chatId, Authentication authentication) {
         Chat chat = chatRepository.findById(chatId).orElseThrow(
                 () -> new EntityNotFoundException("Chat not found")

@@ -55,7 +55,7 @@ public class SecurityConfig {
                                 "/api/auth/change-password", "/api/auth/is-authenticated",
                                 "/api/n8n/trigger",
                                 "/api/chat/create", "/api/chat/rename", "/api/chat/get-all", "/api/chat/delete/{chat_id}",
-                                "/api/message/{chatId}/send", "/api/messages/{chatId}/get-all"
+                                "/api/message/{chatId}/send", "/api/message/{chatId}/get-all"
                         )
                         .authenticated())
 
