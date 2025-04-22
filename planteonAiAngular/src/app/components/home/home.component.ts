@@ -2,6 +2,8 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { AuthService } from '../../services/auth.service';
 import { Chat } from '../../entities/chat';
 import { ChatService } from '../../services/chat.service';
+import { ChatMessage } from '../../entities/chatMessage';
+import { ChatMessageService } from '../../services/chat-message.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +14,7 @@ import { ChatService } from '../../services/chat.service';
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
-  messages: { sender: string, text: string }[] = [];
+  messages: ChatMessage[] = [];
   chatList: Chat[] = [];
   selectedChatId: string | null = null;
 
@@ -29,7 +31,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     private authService: AuthService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private chatMessageService: ChatMessageService
   ) {}
 
   ngOnInit() {
@@ -89,16 +92,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('Opening new chat...');
   }
 
-  sendMessage() {
-    if (this.newMessage.trim()) {
-      this.messages.push({ sender: 'user', text: this.newMessage });
-      this.newMessage = '';
-
-      // symulacja odpowiedzi AI
-      setTimeout(() => {
-        this.messages.push({ sender: 'bot', text: 'To przykładowa odpowiedź.' });
-      }, 600);
+  sendMessage(): void {
+    if (this.newMessage.trim() && this.selectedChatId) {
+      this.chatMessageService.sendMessage(this.selectedChatId, this.newMessage).subscribe({
+        next: (response) => {
+          // Po wysłaniu wiadomości dodaj ją do lokalnej listy
+          this.messages.push(response);
+          this.newMessage = ''; // Czyścimy pole input
+        },
+        error: (err) => {
+          console.error('Error sending message:', err);
+        },
+      });
     }
+
+    setTimeout(() => {
+      this.messages.push(<ChatMessage>{
+        id: '1',
+        createdAt: '123',
+        text: 'Przykładowa odpowiedź',
+        chatId: this.selectedChatId,
+        type: 'OUTPUT'
+      });
+    }, 600);
   }
 
   onInputChange(): void {

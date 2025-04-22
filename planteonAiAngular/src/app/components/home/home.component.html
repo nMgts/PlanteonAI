@@ -64,7 +64,7 @@
       <div class="messages-container" *ngIf="messages.length > 0">
         <div
           *ngFor="let msg of messages"
-          [ngClass]="msg.sender === 'user' ? 'message user-message' : 'message bot-message'">
+          [ngClass]="msg.type === 'INPUT' ? 'message user-message' : 'message bot-message'">
           {{ msg.text }}
         </div>
       </div>
