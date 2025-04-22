@@ -10,6 +10,8 @@ import com.example.planteonAiSpring.repositories.ChatRepository;
 import com.example.planteonAiSpring.types.MessageType;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,8 +45,31 @@ public class ChatMessageService {
         payload.put("sessionId", chat.getId());
         payload.put("chatInput", content);
 
-        n8nController.triggerN8nWorkflow(payload);
+        ResponseEntity<?> response = n8nController.triggerN8nWorkflow(payload);
+        String n8nResponse = (String) response.getBody();
 
-        return chatMessageMapper.toDTO(savedMessage);
+        ChatMessage outputMessage = ChatMessage.builder()
+                .text(n8nResponse)
+                .createdAt(LocalDateTime.now())
+                .type(MessageType.OUTPUT)
+                .chat(chat)
+                .build();
+
+        ChatMessage savedOutputMessage = chatMessageRepository.save(outputMessage);
+
+        return chatMessageMapper.toDTO(savedOutputMessage);
+    }
+
+    private String extractOutputFromN8nResponse(String n8nResponse) {
+        // Parsowanie odpowiedzi JSON i wyciąganie tekstu przepisu
+        // Załóżmy, że n8nResponse to String JSON-a, który ma pole "output"
+        // Możemy tu użyć np. biblioteki Jackson, Gson, itp.
+        try {
+            // Parsujemy odpowiedź JSON i pobieramy wartość pola "output"
+            JSONObject jsonResponse = new JSONObject(n8nResponse);
+            return jsonResponse.getString("output");
+        } catch (Exception e) {
+            throw new RuntimeException("Error extracting recipe from n8n response", e);
+        }
     }
 }
