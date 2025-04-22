@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { Chat } from '../../entities/Chat';
+import { Chat } from '../../entities/chat';
 import { ChatService } from '../../services/chat.service';
 
 @Component({

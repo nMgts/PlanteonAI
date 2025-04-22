@@ -54,7 +54,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/change-password", "/api/auth/is-authenticated",
                                 "/api/n8n/trigger",
-                                "/api/chat/create", "/api/chat/rename", "/api/chat/get-all", "/api/chat/delete/{chat_id}"
+                                "/api/chat/create", "/api/chat/rename", "/api/chat/get-all", "/api/chat/delete/{chat_id}",
+                                "/api/message/{chatId}/send"
                         )
                         .authenticated())
 
