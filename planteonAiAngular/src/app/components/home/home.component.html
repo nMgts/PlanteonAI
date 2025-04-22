@@ -5,19 +5,22 @@
 
     <div class="sidebar-icons">
       <button class="icon-button" title="Menu"
-              (click)="isLeftSidebarOpen = false" title="Zamknij">
+              (click)="isLeftSidebarOpen = false">
         <i class="material-icons">menu</i>
       </button>
-      <button class="icon-button" title="Nowy czat" (click)="createNewChat()">
+      <button class="icon-button"
+              title="Nowy czat" (click)="createNewChat()"
+              *ngIf="!isSelectedChatUnsaved()">
         <i class="material-icons">add</i>
       </button>
     </div>
 
     <div class="chat-list">
-      <div class="chat-item" (click)="openChat(chat)" [ngClass]="{ 'active-chat': chat.id === selectedChatId }"
-           *ngFor="let chat of chatList">
-        {{ chat.title }}
-        <button class="icon-button" (click)="deleteChat(chat.id); $event.stopPropagation()" title="Usuń czat" style="float: right;">
+      <div class="chat-item" (click)="openChat(item.chat)" [ngClass]="{ 'active-chat': item.chat.id === selectedChatId }"
+           *ngFor="let item of chatList">
+        {{ item.chat.title }}
+        <button class="icon-button" (click)="deleteChat(item.chat.id); $event.stopPropagation()"
+                *ngIf="item.saved" title="Usuń czat" style="float: right;">
           <i class="material-icons">delete</i>
         </button>
       </div>
@@ -34,7 +37,8 @@
       <button class="icon-button" (click)="isLeftSidebarOpen = true" title="Menu">
         <i class="material-icons">menu</i>
       </button>
-      <button class="icon-button" title="Nowy czat" (click)="createNewChat()">
+      <button class="icon-button" title="Nowy czat"
+              (click)="createNewChat()" *ngIf="!isSelectedChatUnsaved()">
         <i class="material-icons">add</i>
       </button>
     </div>

@@ -15,10 +15,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
   messages: ChatMessage[] = [];
-  chatList: Chat[] = [];
+  chatList: { chat: Chat, saved: boolean }[] = [];
   selectedChatId: string | null = null;
 
-  isLeftSidebarOpen = false;  // Stan dla lewego menu bocznego
+  isLeftSidebarOpen = true;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
   isAvatarMenuOpen = false;
 
@@ -29,8 +29,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   newMessage = '';
   isFirstMessage = true;
 
-  chatCounter: number = 1;
-
   constructor(
     private authService: AuthService,
     private chatService: ChatService,
@@ -39,7 +37,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.loadChats();
-    this.createNewChat();
+    console.log(this.chatList);
   }
 
   ngAfterViewInit() {
@@ -48,40 +46,88 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   loadChats() {
     this.chatService.getChats().subscribe({
-      next: chats => this.chatList = chats.reverse(),
+      next: chats => {
+        this.chatList = chats.reverse().map(chat => ({
+          chat: chat,
+          saved: true
+        }));
+        this.createNewChat();
+      },
       error: err => console.error('Error during loading chats', err)
     });
   }
 
   createNewChat() {
-    this.chatService.createChat('Nowy chat ' + this.chatCounter).subscribe({
-      next: chat => {
-        this.chatList.unshift(chat);
-        this.selectedChatId = chat.id;
-        this.chatCounter++;
-      },
-      error: err => console.error('error creating chat', err)
-    });
+    const newChat: Chat = {
+      id: '-1',
+      title: 'Nowy chat'
+    };
+
+    const chatEntry = {
+      chat: newChat,
+      saved: false
+    };
+
+    this.chatList.unshift(chatEntry);
+    this.selectedChatId = newChat.id;
+    this.messages = [];
+    console.log(this.chatList);
   }
+
+  async saveNewChat() {
+    const selectedChatEntry = this.chatList.find(
+      entry => entry.chat.id === this.selectedChatId
+    );
+
+    if (!selectedChatEntry) {
+      console.error('Chat not found during saving');
+      return;
+    }
+
+    try {
+      const chatFromServer = await this.chatService.createChat('Zapisany chat').toPromise();
+      if (chatFromServer) {
+        selectedChatEntry.chat = chatFromServer;
+        selectedChatEntry.saved = true;
+        this.selectedChatId = chatFromServer.id;
+      }
+      console.log('Chat created');
+    } catch (err) {
+      console.error('Error creating chat', err);
+    }
+  }
+
 
   deleteChat(chatId: string) {
     this.chatService.deleteChat(chatId).subscribe({
       next: () => {
-        this.chatList = this.chatList.filter(chat => chat.id !== chatId);
+        this.chatList = this.chatList.filter(entry => entry.chat.id !== chatId);
+
         if (this.selectedChatId === chatId) {
           this.selectedChatId = null;
           this.messages = [];
         }
+
+        console.log('Chat deleted');
       },
       error: err => console.error('Error deleting chat', err)
     });
   }
 
+  isSelectedChatUnsaved(): boolean {
+    return !!this.chatList.find(item => item.chat.id === this.selectedChatId && !item.saved);
+  }
+
   openChat(chat: Chat) {
+    const unsavedChatIndex = this.chatList.findIndex(item => item.chat.id === this.selectedChatId && !item.saved);
+
+    // Jeśli taki chat istnieje, usuwamy go z listy
+    if (unsavedChatIndex !== -1) {
+      this.chatList.splice(unsavedChatIndex, 1); // Usuwamy niezapisany chat z listy
+    }
+
     this.selectedChatId = chat.id;
     this.getMessages();
-    console.log('Opening chat: ', chat.title);
-    // todo
   }
 
   toggleAvatarMenu() {
@@ -90,10 +136,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   onModelChange() {
     console.log('Model changed to:', this.selectedModel);
-  }
-
-  openNewChat() {
-    console.log('Opening new chat...');
   }
 
   getMessages() {
@@ -110,8 +152,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   async sendMessage() {
-    if (this.newMessage.trim() && this.selectedChatId) {
+    if (this.isSelectedChatUnsaved()) {
+      // Czekaj na zakończenie zapisu czatu przed wysłaniem wiadomości
+      await this.saveNewChat();
+    }
 
+    if (this.newMessage.trim() && this.selectedChatId) {
       const messageData: ChatMessage = {
         text: this.newMessage,
         type: 'INPUT',
@@ -130,6 +176,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
 
   onInputChange(): void {
     this.resizeTextarea();
