@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   messages: ChatMessage[] = [];
   chatList: { chat: Chat, saved: boolean }[] = [];
   selectedChatId: string | null = null;
+  isLoading = false;
 
   isLeftSidebarOpen = true;  // Stan dla lewego menu bocznego
   isRightSidebarOpen = false;  // Stan dla prawego menu bocznego
@@ -127,6 +128,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     this.selectedChatId = chat.id;
+
+    this.isLoading = true;
     this.getMessages();
   }
 
@@ -143,8 +146,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.chatMessageService.getMessages(this.selectedChatId).subscribe({
         next: (response) => {
           this.messages = response;
+          this.isLoading = false;
         },
         error: (err) => {
+          this.isLoading = false;
           console.error('Error during downloading messages');
         },
       });

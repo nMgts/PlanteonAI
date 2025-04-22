@@ -209,6 +209,15 @@
     font-size: 24px;
   }
 
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    color: white;
+  }
+
   .messages-container {
     width: 100%;
     max-width: 700px;

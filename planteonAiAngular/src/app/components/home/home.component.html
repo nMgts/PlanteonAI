@@ -61,9 +61,15 @@
     <div class="chat-box" [ngClass]="{ 'with-messages': messages.length > 0 }">
 
       <!-- Nagłówek tylko, gdy nie ma wiadomości -->
-      <h2 class="chat-header" *ngIf="messages.length === 0">
+      <h2 class="chat-header" *ngIf="messages.length === 0 && !isLoading">
         W czym mogę Ci pomóc?
       </h2>
+
+      <!-- Spinner ładowania -->
+      <div *ngIf="isLoading" class="loading-spinner">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Wczytywanie...</p>
+      </div>
 
       <!-- Lista wiadomości -->
       <div class="messages-container" *ngIf="messages.length > 0">
