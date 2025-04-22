@@ -104,9 +104,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       next: () => {
         this.chatList = this.chatList.filter(entry => entry.chat.id !== chatId);
 
-        if (this.selectedChatId === chatId) {
-          this.selectedChatId = null;
-          this.messages = [];
+        if (this.selectedChatId === chatId || this.chatList.length === 0) {
+          this.createNewChat();
         }
 
         console.log('Chat deleted');
@@ -168,20 +167,29 @@ export class HomeComponent implements OnInit, AfterViewInit {
         type: 'INPUT',
       };
       this.messages.push(messageData);
+      this.messages.push({ text: 'Przetwarzam...', type: 'OUTPUT' });
 
-      this.chatMessageService.sendMessage(this.selectedChatId, this.newMessage).subscribe({
+      let message = this.newMessage;
+      this.newMessage = '';
+
+      this.chatMessageService.sendMessage(this.selectedChatId, message).subscribe({
         next: (response) => {
           // Po wysłaniu wiadomości dodaj ją do lokalnej listy
+          this.messages.pop();
           this.messages.push(response);
-          this.newMessage = ''; // Czyścimy pole input
         },
         error: (err) => {
+          this.messages.pop();
+          const errorMessage: ChatMessage = {
+            text: 'Wystąpił błąd podczas wysyłania wiadomości.',
+            type: 'OUTPUT',
+          };
+          this.messages.push(errorMessage);
           console.error('Error sending message:', err);
         },
       });
     }
   }
-
 
   onInputChange(): void {
     this.resizeTextarea();

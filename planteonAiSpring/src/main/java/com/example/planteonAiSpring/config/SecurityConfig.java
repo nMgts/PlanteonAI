@@ -40,7 +40,8 @@ public class SecurityConfig {
 
                         // Admin endpoints
                         .requestMatchers(
-                                "/api/auth/register-user", "/api/auth/update-credentials"
+                                "/api/auth/register-user", "/api/auth/update-credentials",
+                                "/api/prompt/add-with-system-type"
                         )
                         .hasAuthority("ADMIN")
 
@@ -55,7 +56,9 @@ public class SecurityConfig {
                                 "/api/auth/change-password", "/api/auth/is-authenticated",
                                 "/api/n8n/trigger",
                                 "/api/chat/create", "/api/chat/rename", "/api/chat/get-all", "/api/chat/delete/{chat_id}",
-                                "/api/message/{chatId}/send", "/api/message/{chatId}/get-all"
+                                "/api/message/{chatId}/send", "/api/message/{chatId}/get-all",
+                                "/api/prompt/get-all", "/api/prompt/get-user", "/api/prompt/get-system", "/api/prompt/add-with-user-type",
+                                "/api/prompt/update", "/api/prompt/delete/{promptId}"
                         )
                         .authenticated())
 
