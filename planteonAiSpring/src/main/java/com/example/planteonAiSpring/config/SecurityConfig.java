@@ -34,7 +34,8 @@ public class SecurityConfig {
 
                         // Public endpoints
                         .requestMatchers(
-                                "/api/auth/login", "/api/auth/logout", "/api/auth/refresh"
+                                "/api/auth/login", "/api/auth/logout", "/api/auth/refresh",
+                                "/api/assistant/chat"
                         )
                         .permitAll()
 
