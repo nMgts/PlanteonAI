@@ -34,8 +34,7 @@ public class SecurityConfig {
 
                         // Public endpoints
                         .requestMatchers(
-                                "/api/auth/login", "/api/auth/logout", "/api/auth/refresh",
-                                "/api/assistant/chat"
+                                "/api/auth/login", "/api/auth/logout", "/api/auth/refresh"
                         )
                         .permitAll()
 
@@ -59,7 +58,8 @@ public class SecurityConfig {
                                 "/api/chat/create", "/api/chat/rename", "/api/chat/get-all", "/api/chat/delete/{chat_id}",
                                 "/api/message/{chatId}/send", "/api/message/{chatId}/get-all",
                                 "/api/prompt/get-all", "/api/prompt/get-user", "/api/prompt/get-system", "/api/prompt/add-with-user-type",
-                                "/api/prompt/update", "/api/prompt/delete/{promptId}"
+                                "/api/prompt/update", "/api/prompt/delete/{promptId}",
+                                "/api/assistant/chat"
                         )
                         .authenticated())
 
