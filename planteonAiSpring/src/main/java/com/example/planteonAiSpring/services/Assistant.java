@@ -2,6 +2,7 @@ package com.example.planteonAiSpring.services;
 
 import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
+import dev.langchain4j.service.TokenStream;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.spring.AiService;
 
@@ -18,7 +19,7 @@ public interface Assistant {
             Używaj dostępnych funkcji do tworzenia, przeglądania dostępnych dzienników użytkownika, zapisywania i odczytywania notatek, gdy poprosi Cię o to użytkownik.
             Aby stworzyć dziennik potrzebujesz, aby użytkownik podał ci jego tytuł oraz musisz sprawdzić czy już takiego nie posiada.
             Do zapisania notatki potrzebujesz informacji o jej treści oraz nazwę dziennika, musisz także sprawdzić czy użytkownik posiada taki dziennik, jeżeli nie to zapytaj go czy utworzyć.
-            Dzisiaj data {{current_date}} a godzina to: {{current_time}}
+            Dzisiejsza data to: {{current_date}} a godzina to: {{current_time}}
             """)
-    String chat(@MemoryId String chatId, @UserMessage Map<String, Object> userMessage);
+    TokenStream chat(@MemoryId String chatId, @UserMessage Map<String, Object> userMessage);
 }
