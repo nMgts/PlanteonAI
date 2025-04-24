@@ -4,6 +4,8 @@ import { Chat } from '../../entities/chat';
 import { ChatService } from '../../services/chat.service';
 import { ChatMessage } from '../../entities/chatMessage';
 import { ChatMessageService } from '../../services/chat-message.service';
+import {SseService} from '../../services/sse.service';
+import {AssistantService} from '../../services/assistant.service';
 
 @Component({
   selector: 'app-home',
@@ -30,10 +32,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   newMessage = '';
   isFirstMessage = true;
 
+  streamingMessage: string = '';
+
   constructor(
     private authService: AuthService,
     private chatService: ChatService,
-    private chatMessageService: ChatMessageService
+    private chatMessageService: ChatMessageService,
+    private sseService: SseService,
+    private assistantService: AssistantService
   ) {}
 
   ngOnInit() {
@@ -172,6 +178,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       let message = this.newMessage;
       this.newMessage = '';
 
+      /*
       this.chatMessageService.sendMessage(this.selectedChatId, message).subscribe({
         next: (response) => {
           // Po wysłaniu wiadomości dodaj ją do lokalnej listy
@@ -188,6 +195,37 @@ export class HomeComponent implements OnInit, AfterViewInit {
           console.error('Error sending message:', err);
         },
       });
+
+       */
+/*
+      this.sseService.getMessageStream(this.selectedChatId).subscribe({
+        next: (chunk: string) => {
+          this.streamingMessage += chunk;
+        },
+        complete: () => {
+          const botMessage: ChatMessage = {
+            text: this.streamingMessage,
+            type: 'OUTPUT'
+          };
+          this.messages.push(botMessage);
+          this.streamingMessage = '';
+        },
+        error: (err) => {
+          const errorMessage: ChatMessage = {
+            text: `Wystąpił błąd podczas odbierania wiadomości. ${err}`,
+            type: 'OUTPUT',
+          };
+          this.messages.push(errorMessage);
+          console.error('Error receiving message: ', err);
+        },
+      });
+
+ */
+
+      this.assistantService.chat(this.selectedChatId, message).subscribe(
+        (response) => console.log(response),
+        (error) => console.log(error)
+      )
     }
   }
 

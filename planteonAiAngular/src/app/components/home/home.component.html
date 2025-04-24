@@ -80,6 +80,10 @@
         </div>
       </div>
 
+      <div class="stream-message" *ngIf="streamingMessage">
+        {{ streamingMessage }}
+      </div>
+
       <!-- Panel na dole lub na środku -->
       <div class="chat-panel" [ngClass]="{ 'at-bottom': messages.length > 0 }">
         <textarea
