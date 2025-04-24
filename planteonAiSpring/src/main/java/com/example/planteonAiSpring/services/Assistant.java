@@ -20,5 +20,5 @@ public interface Assistant {
             Do zapisania notatki potrzebujesz informacji o jej treści oraz nazwę dziennika, musisz także sprawdzić czy użytkownik posiada taki dziennik, jeżeli nie to zapytaj go czy utworzyć.
             Dzisiaj data {{current_date}} a godzina to: {{current_time}}
             """)
-    String chat(@UserMessage Map<String, Object> userMessage);
+    String chat(@MemoryId String chatId, @UserMessage Map<String, Object> userMessage);
 }

@@ -59,7 +59,7 @@ public class SecurityConfig {
                                 "/api/message/{chatId}/send", "/api/message/{chatId}/get-all",
                                 "/api/prompt/get-all", "/api/prompt/get-user", "/api/prompt/get-system", "/api/prompt/add-with-user-type",
                                 "/api/prompt/update", "/api/prompt/delete/{promptId}",
-                                "/api/assistant/chat"
+                                "/api/assistant/chat/{chatId}"
                         )
                         .authenticated())
 
