@@ -20,17 +20,14 @@ import java.util.Map;
 public class AssistantService {
     private final Assistant assistant;
 
-    public Flux<String> chat(String chatId
-            //,
-                             //MessageRequest userMessage,
+    public Flux<String> chat(String chatId, String userMessage
                              //Authentication authentication
     ) {
         //String email = authentication.getName();
         String email = "admin@example.com";
 
         Map<String, Object> input = new HashMap<>();
-        //input.put("message", userMessage.getMessage());
-        input.put("message", "wygeneruj losowy blok kodu java?");
+        input.put("message", userMessage);
         input.put("email", email);
 
         return Flux.create(emitter -> {

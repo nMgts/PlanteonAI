@@ -9,11 +9,11 @@ import { environment } from '../environments/environment';
 export class SseService {
   private baseUrl = `${environment.apiUrl}/assistant`;
 
-  getMessageStream(chatId: string): Observable<string> {
+  getMessageStream(chatId: string, userMessage: string): Observable<string> {
     return new Observable<string>((observer) => {
       const token = localStorage.getItem('accessToken') || '';
       const eventSource = new EventSourcePolyfill(
-        `${this.baseUrl}/chat/${chatId}`,
+        `${this.baseUrl}/chat/${chatId}?userMessage=${encodeURIComponent(userMessage)}`,
         {
           headers: {
 

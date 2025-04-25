@@ -173,7 +173,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
           this.messages.push(outputMessage)
 
-          this.sseService.getMessageStream(this.selectedChatId!).subscribe({
+          this.sseService.getMessageStream(this.selectedChatId!, this.newMessage).subscribe({
             next: (chunk: string) => {
               this.streamingMessage += chunk;
               outputMessage.text += chunk;
@@ -183,6 +183,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 text: this.streamingMessage,
                 type: 'OUTPUT'
               };
+              this.messages.pop();
               this.messages.push(botMessage);
               this.streamingMessage = '';
             },

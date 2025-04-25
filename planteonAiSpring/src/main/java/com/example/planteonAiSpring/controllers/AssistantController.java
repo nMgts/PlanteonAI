@@ -16,7 +16,7 @@ public class AssistantController {
     private final AssistantService assistantService;
 
     @GetMapping(value = "/chat/{chatId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> chatStream(@PathVariable String chatId) {
-        return assistantService.chat(chatId);
+    public Flux<String> chatStream(@PathVariable String chatId, @RequestParam String userMessage) {
+        return assistantService.chat(chatId, userMessage);
     }
 }
