@@ -3,9 +3,11 @@ package com.example.planteonAiSpring.controllers;
 import com.example.planteonAiSpring.requests.MessageRequest;
 import com.example.planteonAiSpring.services.AssistantService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/api/assistant")
@@ -13,10 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class AssistantController {
     private final AssistantService assistantService;
 
-    @GetMapping("/chat/{chatId}")
-    public SseEmitter model(@PathVariable String chatId,
-                            //@RequestBody MessageRequest request,
-                            Authentication authentication) {
-        return assistantService.chat(chatId, authentication);
+    @GetMapping(value = "/chat/{chatId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> chatStream(@PathVariable String chatId) {
+        return assistantService.chat(chatId);
     }
 }

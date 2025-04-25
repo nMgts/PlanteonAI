@@ -5,6 +5,7 @@ import { ChatService } from '../../services/chat.service';
 import { ChatMessage } from '../../entities/chatMessage';
 import { ChatMessageService } from '../../services/chat-message.service';
 import { SseService } from '../../services/sse.service';
+import { DomSanitizer, SafeHtml} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -34,12 +35,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private chatService: ChatService,
     private chatMessageService: ChatMessageService,
-    private sseService: SseService
+    private sseService: SseService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
     this.loadChats();
-    console.log(this.chatList);
   }
 
   ngAfterViewInit() {
@@ -73,7 +74,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.chatList.unshift(chatEntry);
     this.selectedChatId = newChat.id;
     this.messages = [];
-    console.log(this.chatList);
   }
 
   async saveNewChat() {
@@ -93,7 +93,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         selectedChatEntry.saved = true;
         this.selectedChatId = chatFromServer.id;
       }
-      console.log('Chat created');
     } catch (err) {
       console.error('Error creating chat', err);
     }
@@ -108,8 +107,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (this.selectedChatId === chatId || this.chatList.length === 0) {
           this.createNewChat();
         }
-
-        console.log('Chat deleted');
       },
       error: err => console.error('Error deleting chat', err)
     });
@@ -178,9 +175,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
           this.sseService.getMessageStream(this.selectedChatId!).subscribe({
             next: (chunk: string) => {
-              const fixedChunk = this.fixSpacing(chunk);
-              this.streamingMessage += fixedChunk;
-              outputMessage.text += fixedChunk;
+              this.streamingMessage += chunk;
+              outputMessage.text += chunk;
             },
             complete: () => {
               const botMessage: ChatMessage = {
@@ -206,6 +202,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         },
       });
     }
+    console.log(this.streamingMessage);
   }
 
   private fixSpacing(chunk: string): string {
@@ -241,5 +238,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
         console.log('Logged out successfully.')
       }
     );
+  }
+
+  parseMarkdownToHtml(text: string): SafeHtml {
+    const html = text
+      .replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>') // blok kodu
+      .replace(/'''([^']+)'''/g, '<code>$1</code>')             // inline kod
+      .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')                 // pogrubienie
+      .replace(/_([^_]+)_/g, '<i>$1</i>');                      // kursywa
+
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }

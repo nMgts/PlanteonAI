@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,20 +20,54 @@ import java.util.Map;
 public class AssistantService {
     private final Assistant assistant;
 
-    public SseEmitter chat(String chatId,
-                           //MessageRequest userMessage,
-                           Authentication authentication) {
-        String email = authentication.getName();
+    public Flux<String> chat(String chatId
+            //,
+                             //MessageRequest userMessage,
+                             //Authentication authentication
+    ) {
+        //String email = authentication.getName();
+        String email = "admin@example.com";
 
         Map<String, Object> input = new HashMap<>();
         //input.put("message", userMessage.getMessage());
-        input.put("message", "cześć jak możesz mi pomóc");
+        input.put("message", "wygeneruj losowy blok kodu java?");
         input.put("email", email);
 
+        return Flux.create(emitter -> {
+            TokenStream tokenStream = assistant.chat(chatId, input);
+            StringBuilder buffer = new StringBuilder();
+
+            tokenStream
+                    .onPartialResponse(partialResponse -> {
+                        buffer.append(partialResponse);
+
+                        // Sprawdzamy, czy końcowa część bufora zawiera pełne słowo (np. kończy się spacją, interpunkcją lub nową linią)
+                        if (partialResponse.matches(".*[\\s.,!?;:\\n]$")) {
+                            buffer.append(" ");
+                            emitter.next(buffer.toString());  // Wysyłamy pełne słowo lub frazę
+                            buffer.setLength(0);  // Czyścimy bufor po wysłaniu pełnego słowa
+                        }
+                    })
+                    .onCompleteResponse(response -> {
+                        emitter.next("__END__");
+                        emitter.complete();
+                        System.out.println(response);
+                    })  // Zakończenie strumienia
+                    .onError(error -> {
+                        System.out.println("Wystąpił błąd: " + error.getMessage());
+                        error.printStackTrace(); // (opcjonalnie) wypisanie całego stosu
+                        emitter.error(error);
+                    })  // Obsługa błędów
+                    .start();
+        });
+
+
+        /*
         SseEmitter emitter = new SseEmitter(0L);
         StringBuilder buffer = new StringBuilder();
 
         TokenStream tokenStream = assistant.chat(chatId, input);
+
         tokenStream.onPartialResponse((String partialResponse) -> {
                     buffer.append(partialResponse);
 
@@ -55,9 +90,9 @@ public class AssistantService {
                 })
                 .onCompleteResponse((ChatResponse response) -> {
                     System.out.println("odpowiedź: " + response);
-                    emitter.complete();
+                    //emitter.complete();
 
-                    /*
+
                         try {
         if (buffer.length() > 0) {
             emitter.send(SseEmitter.event().data(buffer.toString()));
@@ -65,7 +100,7 @@ public class AssistantService {
     } catch (IOException e) {
         emitter.completeWithError(e);
     }
-                     */
+
 
                 })
                 .onError((Throwable error) -> {
@@ -75,5 +110,6 @@ public class AssistantService {
                 .start();
 
         return emitter;
+        */
     }
 }

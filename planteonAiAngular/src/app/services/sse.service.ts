@@ -16,12 +16,19 @@ export class SseService {
         `${this.baseUrl}/chat/${chatId}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+
           },
         }
       );
 
+      //Authorization: `Bearer ${token}`,
+
       eventSource.onmessage = (event) => {
+        if (event.data === '__END__') {
+          observer.complete();   // zakończ strumień
+          eventSource.close();   // zamknij EventSource
+          return;
+        }
         observer.next(event.data);
       };
 
