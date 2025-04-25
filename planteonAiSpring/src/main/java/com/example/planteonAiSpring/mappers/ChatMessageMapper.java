@@ -16,7 +16,6 @@ public class ChatMessageMapper {
         return ChatMessageDTO.builder()
                 .id(chatMessage.getId())
                 .text(chatMessage.getText())
-                .createdAt(chatMessage.getCreatedAt())
                 .type(chatMessage.getType())
                 .chatId(chatMessage.getChat().getId())
                 .build();
@@ -26,7 +25,6 @@ public class ChatMessageMapper {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setId(chatMessage.getId());
         chatMessage.setText(chatMessage.getText());
-        chatMessage.setCreatedAt(chatMessageDTO.getCreatedAt());
         chatMessage.setType(chatMessageDTO.getType());
 
         Chat chat = chatRepository.findById(chatMessageDTO.getChatId()).orElseThrow();

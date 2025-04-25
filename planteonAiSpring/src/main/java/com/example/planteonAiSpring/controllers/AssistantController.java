@@ -13,8 +13,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class AssistantController {
     private final AssistantService assistantService;
 
-    @PostMapping("/chat/{chatId}")
-    public SseEmitter model(@PathVariable String chatId, @RequestBody MessageRequest request, Authentication authentication) {
-        return assistantService.chat(chatId, request, authentication);
+    @GetMapping("/chat/{chatId}")
+    public SseEmitter model(@PathVariable String chatId,
+                            //@RequestBody MessageRequest request,
+                            Authentication authentication) {
+        return assistantService.chat(chatId, authentication);
     }
 }

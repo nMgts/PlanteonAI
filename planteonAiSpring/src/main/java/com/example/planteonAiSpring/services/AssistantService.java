@@ -1,7 +1,5 @@
 package com.example.planteonAiSpring.services;
 
-import com.example.planteonAiSpring.requests.MessageRequest;
-
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.service.TokenStream;
@@ -21,11 +19,14 @@ import java.util.Map;
 public class AssistantService {
     private final Assistant assistant;
 
-    public SseEmitter chat(String chatId, MessageRequest userMessage, Authentication authentication) {
+    public SseEmitter chat(String chatId,
+                           //MessageRequest userMessage,
+                           Authentication authentication) {
         String email = authentication.getName();
 
         Map<String, Object> input = new HashMap<>();
-        input.put("message", userMessage.getMessage());
+        //input.put("message", userMessage.getMessage());
+        input.put("message", "cześć jak możesz mi pomóc");
         input.put("email", email);
 
         SseEmitter emitter = new SseEmitter(0L);

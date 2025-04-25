@@ -26,9 +26,6 @@ public class ChatMessage {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String text;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MessageType type;

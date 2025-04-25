@@ -61,13 +61,12 @@ public class ChatMessageService {
 
         ChatMessage message = ChatMessage.builder()
                 .text(content)
-                .createdAt(LocalDateTime.now())
                 .type(MessageType.INPUT)
                 .chat(chat)
                 .build();
 
         ChatMessage savedMessage = chatMessageRepository.save(message);
-
+/*
         Map<String, Object> payload = new HashMap<>();
         payload.put("sessionId", chat.getId());
         payload.put("chatInput", content);
@@ -77,16 +76,16 @@ public class ChatMessageService {
 
         ChatMessage outputMessage = ChatMessage.builder()
                 .text(n8nResponse)
-                .createdAt(LocalDateTime.now())
                 .type(MessageType.OUTPUT)
                 .chat(chat)
                 .build();
 
         ChatMessage savedOutputMessage = chatMessageRepository.save(outputMessage);
-
-        return chatMessageMapper.toDTO(savedOutputMessage);
+*/
+        return chatMessageMapper.toDTO(savedMessage);
     }
 
+    /*
     private String extractOutputFromN8nResponse(String n8nResponse) {
         // Parsowanie odpowiedzi JSON i wyciąganie tekstu przepisu
         // Załóżmy, że n8nResponse to String JSON-a, który ma pole "output"
@@ -99,4 +98,6 @@ public class ChatMessageService {
             throw new RuntimeException("Error extracting recipe from n8n response", e);
         }
     }
+
+     */
 }
