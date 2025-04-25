@@ -30,13 +30,21 @@ public class AssistantService {
         input.put("email", email);
 
         SseEmitter emitter = new SseEmitter(0L);
+        StringBuilder buffer = new StringBuilder();
 
         TokenStream tokenStream = assistant.chat(chatId, input);
         tokenStream.onPartialResponse((String partialResponse) -> {
-                    try {
-                        emitter.send(SseEmitter.event().data(partialResponse));
-                    } catch (IOException e) {
-                        emitter.completeWithError(e);
+                    buffer.append(partialResponse);
+
+                    // Sprawdź, czy bufor zawiera "pełne słowo"
+                    String current = buffer.toString();
+                    if (current.matches(".*[\\s.,!?;:]$")) { // kończy się spacją lub interpunkcją
+                        try {
+                            emitter.send(SseEmitter.event().data(current));
+                            buffer.setLength(0); // czyścimy bufor
+                        } catch (IOException e) {
+                            emitter.completeWithError(e);
+                        }
                     }
                 })
                 .onRetrieved((List<Content> contents) -> {
@@ -46,8 +54,19 @@ public class AssistantService {
                     System.out.println(toolExecution);
                 })
                 .onCompleteResponse((ChatResponse response) -> {
-                    System.out.println(response);
+                    System.out.println("odpowiedź: " + response);
                     emitter.complete();
+
+                    /*
+                        try {
+        if (buffer.length() > 0) {
+            emitter.send(SseEmitter.event().data(buffer.toString()));
+        }
+    } catch (IOException e) {
+        emitter.completeWithError(e);
+    }
+                     */
+
                 })
                 .onError((Throwable error) -> {
                     error.printStackTrace();

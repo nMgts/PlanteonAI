@@ -178,8 +178,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
           this.sseService.getMessageStream(this.selectedChatId!).subscribe({
             next: (chunk: string) => {
-              this.streamingMessage += chunk;
-              outputMessage.text += chunk;
+              const fixedChunk = this.fixSpacing(chunk);
+              this.streamingMessage += fixedChunk;
+              outputMessage.text += fixedChunk;
             },
             complete: () => {
               const botMessage: ChatMessage = {
@@ -205,6 +206,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
         },
       });
     }
+  }
+
+  private fixSpacing(chunk: string): string {
+    const lastChar = this.streamingMessage.slice(-1);
+
+    const noSpaceBefore = ['.', ',', '!', '?', ';', ':'];
+    const chunkStartsWithPunctuation = noSpaceBefore.some(p => chunk.startsWith(p));
+
+    const needsSpace = lastChar && !lastChar.match(/\s/) && !chunkStartsWithPunctuation;
+
+    return needsSpace ? ' ' + chunk : chunk;
   }
 
   onInputChange(): void {
